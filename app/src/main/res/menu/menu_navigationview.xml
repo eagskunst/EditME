@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/menu_navview">
+<group android:checkableBehavior="single">
+    <item
+        android:id="@+id/file_item"
+        android:title="@string/file"
+        >
+        <!--android:icon="@drawable/ic_file_48dp"-->
+
+
+    </item>
+
+    <item
+        android:id="@+id/edit_item"
+        android:title="@string/edit"
+        >
+        <!--android:icon="@drawable/ic_edit_48dp"-->
+
+
+    </item>
+
+    <item
+        android:id="@+id/preferences_item"
+        android:title="@string/preferences">
+    <!-- android:icon="@drawable/ic_preferences_48dp"-->
+
+
+    </item>
+</group>
+</menu>

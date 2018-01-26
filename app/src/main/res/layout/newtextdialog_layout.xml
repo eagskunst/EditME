@@ -1,0 +1,30 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/newtitle_linearlayout"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/textview_dialoglayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/title_newtitlefragment"
+        android:textSize="@dimen/textsize_tvdialog"
+        android:background="@color/colorPrimaryDark"
+        />
+    <EditText
+        android:id="@+id/edittext_dialoglayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/edittext_verticalmargin"
+        android:layout_marginBottom="@dimen/edittext_verticalmargin"
+        android:layout_marginLeft="@dimen/edittext_horizontalmargin"
+        android:layout_marginRight="@dimen/edittext_horizontalmargin"
+        android:inputType="textCapSentences"
+        android:hint="@string/newtext"
+        />
+
+</LinearLayout>

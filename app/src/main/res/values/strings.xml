@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">EditorDeTexto</string>
+    <string name="file">Archivo</string>
+    <string name="edit">Editar</string>
+    <string name="preferences">Preferencias</string>
+    <string name="no_texts">Aún no has escrito nada</string>
+    <string name="newtext">Nuevo texto</string>
+    <string name="title_activity_drawer_test">DrawerTest</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="home">Home</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_newtitlefragment">Ingresa el titulo:</string>
+    <string name="OK">OK</string>
+    <string name="cancel">Cancelar</string>
+    <string name="dialog_fire_missiles">Fire missiles?</string>
+    <string name="fire">Fire!</string>
+    <string name="save">GUARDAR</string>
+    <string name="externalavailable">No esta disponible el sistema de almacenamiento externo</string>
+</resources>

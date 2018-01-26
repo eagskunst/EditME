@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="size_textlinearlayout">50sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">8dp</dimen>
+    <dimen name="margin_cardview">5dp</dimen>
+    <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="newtext_margin">55dp</dimen>
+    <dimen name="textsize_tvdialog">30sp</dimen>
+    <dimen name="edittext_horizontalmargin">4dp</dimen>
+    <dimen name="edittext_verticalmargin">10dp</dimen>
+    <dimen name="elevation_cardview">4dp</dimen>
+</resources>
