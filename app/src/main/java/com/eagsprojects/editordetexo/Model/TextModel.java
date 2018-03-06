@@ -9,10 +9,12 @@ public class TextModel {
 
     private String title;
     private String subtext;
+    private String text;
 
-    public TextModel(String title, String subtext){
+    public TextModel(String title, String subtext, String text){
         this.title = title;
         this.subtext = subtext;
+        this.text = text;
     }
 
     public String getTitle() {
@@ -31,5 +33,11 @@ public class TextModel {
         this.subtext = subtext;
     }
 
+    public String getText() {
+        return text;
+    }
 
+    public void setText(String text) {
+        this.text = text;
+    }
 }

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedWriter;
@@ -24,9 +25,10 @@ import java.io.Writer;
 
 public class NewTextActivity extends AppCompatActivity {
 
-    public String filename,text = new String();
+    public String filename,text = new String(),completeText;
     public Button button;
-    public File root, myDir;
+    public File root, myDir,file;
+    public boolean overwrite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,11 @@ public class NewTextActivity extends AppCompatActivity {
         filename = title;
         setContentView(R.layout.activity_new_text);
         EditText editText = findViewById(R.id.edittext);
+        if(getIntent().getExtras().getString("text") != null){
+            completeText = getIntent().getExtras().getString("text");
+            editText.setText(completeText, TextView.BufferType.EDITABLE);
+            overwrite = true;
+        }
         showToolbar(title,true, View.VISIBLE,editText);
     }
 
@@ -50,17 +57,22 @@ public class NewTextActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(isExternalStorageWritable()){
+                    if(!overwrite){
+                        file = new File(myDir,filename + ".txt");
+                    }
+                    else{
+                        file = new File(myDir,filename);
+                    }
                     try {
-                        File file = new File(myDir,filename + ".txt");
                         Writer output = new BufferedWriter(new FileWriter(file));
                         text = editText.getText().toString();
+                        System.out.println(editText.getText().toString());
                         output.write(text);
                         output.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                 }
                 else{
                     Toast.makeText(view.getContext(),R.string.externalavailable,Toast.LENGTH_LONG).show();

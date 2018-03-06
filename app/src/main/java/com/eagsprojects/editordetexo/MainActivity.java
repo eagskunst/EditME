@@ -3,7 +3,9 @@ package com.eagsprojects.editordetexo;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,6 +14,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -32,10 +35,9 @@ public class MainActivity extends AppCompatActivity{
 
     public TextView textView;
     public File root;
-    public String title_new;
     public RecyclerView rv;
     public List<TextModel> textList = new ArrayList<>();
-    public ArrayList<String> titles = new ArrayList<>(),subtexts = new ArrayList<>();
+    public ArrayList<String> titles = new ArrayList<>(),subtexts = new ArrayList<>(),completeText = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +56,8 @@ public class MainActivity extends AppCompatActivity{
         String s[] = root.list();
 
 
-        setTitlesAndSubtexts(s,titles,subtexts);
-        startRecyclerView(s,titles,subtexts);
+        setTitlesAndSubtexts(s,titles,subtexts,completeText);
+        startRecyclerView(s,titles,subtexts,completeText);
 
         if(s.length == 0){
             textView.setVisibility(View.VISIBLE);
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-    private void setTitlesAndSubtexts(String[] s, ArrayList<String> titles, ArrayList<String> subtexts) {
+    private void setTitlesAndSubtexts(String[] s, ArrayList<String> titles, ArrayList<String> subtexts, ArrayList<String> completeText) {
         StringBuilder texts = new StringBuilder();
         for (int i = 0;i<s.length;i++){
             titles.add(s[i]);
@@ -106,9 +108,24 @@ public class MainActivity extends AppCompatActivity{
                 else{
                     subtexts.add(line);
                 }
-
-            } catch (FileNotFoundException e) {
+                br.close();
+            }
+            catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+        for (int i = 0;i<s.length;i++){
+            File file = new File(root,s[i]);
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line,txt = "";
+
+                while ((line = br.readLine()) != null) {
+                    txt += line;
+                    txt+= "\n";
+                }
+                completeText.add(txt);
+                br.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -118,7 +135,7 @@ public class MainActivity extends AppCompatActivity{
 
 
 
-    private void startRecyclerView(String[] s, ArrayList<String> titles, ArrayList<String> subtexts) {
+    private void startRecyclerView(String[] s, ArrayList<String> titles, ArrayList<String> subtexts, ArrayList<String> completeText) {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
 
         if(rv != null){
@@ -126,10 +143,32 @@ public class MainActivity extends AppCompatActivity{
         }
 
         for(int i = 0;i < s.length; i++){
-            TextModel textModel = new TextModel(titles.get(i),subtexts.get(i));
+            TextModel textModel = new TextModel(titles.get(i),subtexts.get(i), completeText.get(i));
             textList.add(textModel);
         }
-        TextsAdapter textsAdapter = new TextsAdapter(textList);
+
+        for (int i = 0;i<s.length;i++){
+            System.out.println(completeText.get(i));
+        }
+
+        TextsAdapter textsAdapter = new TextsAdapter(textList, new TextsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(TextModel item) {
+                Intent intent = new Intent(MainActivity.this,NewTextActivity.class);
+                intent.putExtra("title",item.getTitle());
+                intent.putExtra("text",item.getText());
+
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                    /*Explode explode = new Explode();
+                    explode.setDuration(1000);
+                    getWindow().setExitTransition(explode);*/
+                    startActivity(intent);
+                }
+                else{
+                    startActivity(intent);
+                }
+            }
+        });
 
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(textsAdapter);
