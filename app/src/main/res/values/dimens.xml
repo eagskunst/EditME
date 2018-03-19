@@ -13,4 +13,7 @@
     <dimen name="edittext_horizontalmargin">4dp</dimen>
     <dimen name="edittext_verticalmargin">10dp</dimen>
     <dimen name="elevation_cardview">4dp</dimen>
+    <dimen name="height_button">30dp</dimen>
+    <dimen name="width_button">20dp</dimen>
+    <dimen name="textsize_erasefragment">20sp</dimen>
 </resources>

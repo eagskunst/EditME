@@ -1,8 +1,10 @@
 package com.eagsprojects.editordetexo;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -16,27 +18,39 @@ import android.widget.Toast;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 public class NewTextActivity extends AppCompatActivity {
 
-    public String filename,text = new String(),completeText;
-    public Button button;
-    public File root, myDir,file;
-    public boolean overwrite = false;
+    public static final String KEY_FONT_TYPES = "pref_fonttype";
+    public static final String KEY_FONT_SIZE = "pref_fontsize";
+    private static final String TAG = "NewTextActivity";
+
+
+
+    public String filename,text,completeText;
+    private Button button;
+    public File myDir,file;
+    private boolean overwrite = false;
+    private EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_text);
+        Typeface font = Typeface.createFromAsset(getAssets(),"font/future.ttf");
+
         String title = getIntent().getExtras().getString("title");
         filename = title;
-        setContentView(R.layout.activity_new_text);
-        EditText editText = findViewById(R.id.edittext);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+
+        editText = findViewById(R.id.edittext);
+        changeTypeface(editText,preferences,font);
+        changeTextSize(editText,preferences);
+
         if(getIntent().getExtras().getString("text") != null){
             completeText = getIntent().getExtras().getString("text");
             editText.setText(completeText, TextView.BufferType.EDITABLE);
@@ -44,6 +58,7 @@ public class NewTextActivity extends AppCompatActivity {
         }
         showToolbar(title,true, View.VISIBLE,editText);
     }
+
 
     public void showToolbar(String title, boolean upButton, int showButton, final EditText editText){
         button = findViewById(R.id.button_toolbar);
@@ -66,7 +81,6 @@ public class NewTextActivity extends AppCompatActivity {
                     try {
                         Writer output = new BufferedWriter(new FileWriter(file));
                         text = editText.getText().toString();
-                        System.out.println(editText.getText().toString());
                         output.write(text);
                         output.close();
                     } catch (IOException e) {
@@ -85,6 +99,7 @@ public class NewTextActivity extends AppCompatActivity {
         });
     }
 
+
     /* Checks if external storage is available for read and write */
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
@@ -93,8 +108,59 @@ public class NewTextActivity extends AppCompatActivity {
             myDir = new File(root +"/Texts");
             return true;
         }
-        return false;
+        else{
+            return false;
+        }
     }
 
+    private void changeTypeface(EditText editText, SharedPreferences sharedPreferences, Typeface font) {
+        String typeface = sharedPreferences.getString(KEY_FONT_TYPES,getString(R.string.pref_fonttype_default));
+        Log.d(TAG,"Typeface: "+typeface);
+
+        switch (typeface) {
+            case "1":
+                editText.setTypeface(Typeface.DEFAULT);
+                Log.d(TAG, "Typeface: " + editText.getTypeface());
+                break;
+            case "2":
+                editText.setTypeface(font);
+                Log.d(TAG, "Typeface: " + editText.getTypeface());
+                break;
+            case "3":
+                editText.setTypeface(Typeface.SERIF);
+                Log.d(TAG, "Typeface: " + editText.getTypeface());
+                break;
+            case "4":
+                editText.setTypeface(Typeface.MONOSPACE);
+                Log.d(TAG, "Typeface: " + editText.getTypeface());
+                break;
+            default:
+                Log.d(TAG, "NONE. Typeface: " + editText.getTypeface());
+                break;
+        }
+    }
+
+    private void changeTextSize(EditText editText, SharedPreferences preferences) {
+        String textsize = preferences.getString(KEY_FONT_SIZE,getString(R.string.pref_fontsize_default));
+        Log.d(TAG,"Text size: "+textsize);
+
+        switch (textsize) {
+            case "1":
+                editText.setTextSize(14f);
+                Log.d(TAG, "Text size: " + editText.getTextSize());
+                break;
+            case "2":
+                editText.setTextSize(18f);
+                Log.d(TAG, "Text size: " + editText.getTextSize());
+                break;
+            case "3":
+                editText.setTextSize(22f);
+                Log.d(TAG, "Text size: " + editText.getTextSize());
+                break;
+            default:
+                Log.d(TAG, "NONE. TEXT SIZE: " + editText.getTextSize());
+                break;
+        }
+    }
 
 }

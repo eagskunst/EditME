@@ -21,10 +21,14 @@ public class TextsAdapter extends RecyclerView.Adapter<TextsAdapter.TextViewHold
 
     private List<TextModel> textList;
     private final OnItemClickListener clickListener;
+    private final OnLongItemClickListener longClickListener;
+    private static int cvColor;
 
-    public TextsAdapter (List<TextModel> textList,OnItemClickListener clickListener){
+    public TextsAdapter (List<TextModel> textList,int cvColor,OnItemClickListener clickListener, OnLongItemClickListener longClickListener){
         this.textList = textList;
         this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
+        this.cvColor = cvColor;
     }
 
     @Override
@@ -38,9 +42,7 @@ public class TextsAdapter extends RecyclerView.Adapter<TextsAdapter.TextViewHold
     public void onBindViewHolder(TextViewHolder holder, int position) {
         holder.title.setText(textList.get(position).getTitle());
         holder.subtext.setText(textList.get(position).getSubtext());
-        //holder.text.setText(textList.get(position).getText());
-        //holder.text.setVisibility(View.INVISIBLE);
-        holder.bind(textList.get(position),clickListener);
+        holder.bind(textList.get(position),clickListener,longClickListener);
     }
 
     @Override
@@ -57,24 +59,38 @@ public class TextsAdapter extends RecyclerView.Adapter<TextsAdapter.TextViewHold
         public TextViewHolder(View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.cardview);
+            cardView.setCardBackgroundColor(cvColor);
             title = itemView.findViewById(R.id.texttitle);
             subtext = itemView.findViewById(R.id.subtext);
             text = itemView.findViewById(R.id.edittext);
         }
 
-        public void bind(final TextModel textModel, final OnItemClickListener clickListener) {
+        public void bind(final TextModel textModel, final OnItemClickListener clickListener, final OnLongItemClickListener longClickListener) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     clickListener.onItemClick(textModel);
                 }
             });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    longClickListener.onItemLongClick(textModel);
+                    return true;
+                }
+            });
+
         }
     }
 
     public interface OnItemClickListener{
         void onItemClick(TextModel item);
     }
+
+    public interface OnLongItemClickListener{
+        void onItemLongClick(TextModel item);
+    }
+
 }
 
 

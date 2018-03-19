@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">EditorDeTexto</string>
-    <string name="file">Archivo</string>
+    <string name="file">Archivos</string>
     <string name="edit">Editar</string>
-    <string name="preferences">Preferencias</string>
+    <string name="settings">Configuracion</string>
     <string name="no_texts">Aún no has escrito nada</string>
     <string name="newtext">Nuevo texto</string>
     <string name="title_activity_drawer_test">DrawerTest</string>
+    <string name="default_name">Nuevo texto</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -22,4 +23,18 @@
     <string name="fire">Fire!</string>
     <string name="save">GUARDAR</string>
     <string name="externalavailable">No esta disponible el sistema de almacenamiento externo</string>
+    <string name="menu_bold">Bold</string>
+    <string name="menu_underline">Underline</string>
+    <string name="menu_italic">Italic</string>
+    <string name="menu_left_align">Left align</string>
+    <string name="menu_center_align">Center align</string>
+    <string name="menu_justify_align">Justify</string>
+    <string name="erase">¿Borrar el texto seleccionado?</string>
+    <string name="yes">SI</string>
+    <string name="no">NO</string>
+    <string name="fonttype">Tipo de fuente</string>
+    <string name="pref_fonttype_default">Normal</string>
+    <string name="pref_fontsize_default">14sp</string>
+    <string name="fontsize">Tamaño de fuente</string>
+    <string name="cardcolor">Color de fondo de los recuadros</string>
 </resources>

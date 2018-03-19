@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:title="@string/fonttype"
+        android:key="pref_fonttype"
+        android:defaultValue="1"
+        android:entries="@array/pref_fonttype"
+        android:entryValues="@array/pref_fonttype_values"
+        />
+
+    <ListPreference
+        android:title="@string/fontsize"
+        android:key="pref_fontsize"
+        android:defaultValue="1"
+        android:entries="@array/pref_fontsize"
+        android:entryValues="@array/pref_fontsize_values"
+        />
+
+    <ListPreference
+        android:title="@string/cardcolor"
+        android:key="pref_cardcolor"
+        android:defaultValue="1"
+        android:entries="@array/pref_cardcolor"
+        android:entryValues="@array/pref_cardcolor_values"
+        />
+
+</PreferenceScreen>

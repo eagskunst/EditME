@@ -10,7 +10,13 @@
     tools:openDrawer="start"
     >
 
-    <include layout="@layout/navigation_view_layout"/>
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include layout="@layout/actionbar_toolbar"/>
+
+    </FrameLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/navigationview_1"
@@ -20,6 +26,8 @@
         android:fitsSystemWindows="true"
         android:dividerHeight="0dp"
         app:menu="@menu/menu_navigationview" />
+
+
 
 
 </android.support.v4.widget.DrawerLayout>
