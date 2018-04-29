@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EditorDeTexto</string>
+    <string name="app_name">EditME</string>
     <string name="file">Archivos</string>
     <string name="edit">Editar</string>
     <string name="settings">Configuracion</string>
@@ -19,8 +19,6 @@
     <string name="title_newtitlefragment">Ingresa el titulo:</string>
     <string name="OK">OK</string>
     <string name="cancel">Cancelar</string>
-    <string name="dialog_fire_missiles">Fire missiles?</string>
-    <string name="fire">Fire!</string>
     <string name="save">GUARDAR</string>
     <string name="externalavailable">No esta disponible el sistema de almacenamiento externo</string>
     <string name="menu_bold">Bold</string>
@@ -37,4 +35,18 @@
     <string name="pref_fontsize_default">14sp</string>
     <string name="fontsize">Tamaño de fuente</string>
     <string name="cardcolor">Color de fondo de los recuadros</string>
+    <string name="how_to_erase_text">¿Cómo borrar un texto?</string>
+    <string name="where_is_the_root">¿Donde se guardan los archivos?</string>
+    <string name="sync_with_google_drive">Sincronización con Google Drive</string>
+    <string name="loremipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a vestibulum quam. Fusce pharetra accumsan ipsum, non facilisis est auctor sit amet. Quisque luctus porta nisl venenatis auctor. Donec non eros vel tellus congue aliquam. Vestibulum sit amet commodo tortor, eget sodales ex. Etiam commodo aliquet efficitur. Proin laoreet laoreet.</string>
+    <string name="help">Ayuda</string>
+    <string name="sync">Sincronizar</string>
+    <string name="download">Descargar</string>
+    <string name="app_texts">Textos de EditME</string>
+    <string name="erasing_a_text">Para borrar un texto, mantenga seleccionado el texto que quiera eliminar y oprima "SI".</string>
+    <string name="where_to_find">Los archivos se guardan en la raíz de la memoria interna del dispotivo dentro de una carpeta llamada "Texts". Puede añadir archivos de extensión ".txt" a esta carpeta y aparecerán en la aplicación para poder ser editadas.</string>
+    <string name="googledrive_sync">Si enlazaste Google Drive con esta aplicación puedes usar las funciones "Sincronizar" y "Descargar" de el menú desplegable. Con "Sincronizar" puedes subir y sobreescribir los archivos creados por la aplicación a tu almacenamiento en la nube. Con "Download" puedes bajar los archivos de extensión ".txt" a tu dispositivo y aparecerán en la aplicación. Los archivos que se suban estarán en una carpeta llamada "EditME Texts". Es importante aclarar que solo se puede descargar textos creados por este aplicación.</string>
+    <string name="sign_in_google">Iniciar sesión en Google</string>
+    <string name="sign_out_google">Cerrar sesión de Google</string>
+    <string name="not_linked_to_google">Aún no has sincronizado tu cuenta de Google con esta aplicación.</string>
 </resources>

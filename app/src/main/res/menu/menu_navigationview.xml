@@ -2,6 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/menu_navview">
     <group android:checkableBehavior="single">
+
+        <!-- All icons for NavigationView menus must be 18dp. If not, the app would crash! !-->
         <item
             android:id="@+id/file_item"
             android:title="@string/file"
@@ -9,15 +11,29 @@
             android:icon="@drawable/ic_files"
             />
         <item
-            android:id="@+id/edit_item"
-            android:title="@string/edit"
-            android:checkable="true"
-            />
-        <item
             android:id="@+id/configuration_item"
             android:title="@string/settings"
             android:checkable="true"
             android:icon="@drawable/ic_settings"
+            />
+
+        <item
+            android:id="@+id/help_item"
+            android:title="@string/help"
+            android:checkable="true"
+            android:icon="@drawable/ic_help"
+            />
+        <item
+            android:id="@+id/googledrivesync_item"
+            android:title="@string/sync"
+            android:checkable="true"
+            android:icon="@drawable/ic_sync"
+            />
+        <item
+            android:id="@+id/googledrivedwn_item"
+            android:title="@string/download"
+            android:checkable="true"
+            android:icon="@drawable/ic_download"
             />
 
     </group>

@@ -27,10 +27,10 @@
         <item>3</item>
     </string-array>
     <string-array name="pref_cardcolor">
-        <item>Blanco</item>
-        <item>Azul</item>
-        <item>Amarillo</item>
-        <item>Verde</item>
+        <item>White</item>
+        <item>Blue</item>
+        <item>Yellow</item>
+        <item>Green</item>
     </string-array>
     <string-array name="pref_cardcolor_values">
         <item>1</item>

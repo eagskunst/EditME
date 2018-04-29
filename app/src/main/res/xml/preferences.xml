@@ -26,4 +26,12 @@
         android:entryValues="@array/pref_cardcolor_values"
         />
 
+
+    <SwitchPreference
+        android:title="@string/sign_in_google"
+        android:key="pref_is_sign_in"
+        android:switchTextOn="@string/sign_in_google"
+        android:switchTextOff="@string/sign_out_google"
+        />
+
 </PreferenceScreen>

@@ -13,6 +13,11 @@
     >
     <include layout="@layout/actionbar_toolbar" />
 
+    <!-- Remember when using an AppBarLayout you have to specify the layout/view
+    in this case, for the FrameLayout.
+    However, in the fragment_archives.xml case, is for the RecyclerView.
+    !-->
+
     <FrameLayout
         android:id="@+id/frame_container"
         android:layout_width="match_parent"

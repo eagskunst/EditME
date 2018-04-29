@@ -2,6 +2,7 @@ package com.eagsprojects.editordetexo.Model;
 
 /**
  * Created by Emmanuel on 24/1/2018.
+ * Simple POJO. Not much more to add...
  */
 
 public class TextModel {

@@ -24,15 +24,15 @@ import java.io.Writer;
 
 public class NewTextActivity extends AppCompatActivity {
 
-    public static final String KEY_FONT_TYPES = "pref_fonttype";
-    public static final String KEY_FONT_SIZE = "pref_fontsize";
+    private static final String KEY_FONT_TYPES = "pref_fonttype";
+    private static final String KEY_FONT_SIZE = "pref_fontsize";
     private static final String TAG = "NewTextActivity";
 
 
 
-    public String filename,text,completeText;
+    private String filename,text,completeText;
     private Button button;
-    public File myDir,file;
+    private File myDir,file;
     private boolean overwrite = false;
     private EditText editText;
 
@@ -42,19 +42,20 @@ public class NewTextActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_text);
         Typeface font = Typeface.createFromAsset(getAssets(),"font/future.ttf");
 
+        //Getting the title from the NewTextDialongFragment or the ArchivesFragment
         String title = getIntent().getExtras().getString("title");
         filename = title;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
 
         editText = findViewById(R.id.edittext);
-        changeTypeface(editText,preferences,font);
-        changeTextSize(editText,preferences);
+        changeTypeface(editText,preferences,font);//check the typeface from the preferences, then change it
+        changeTextSize(editText,preferences);//same but for text size
 
-        if(getIntent().getExtras().getString("text") != null){
+        if(getIntent().getExtras().getString("text") != null){//checking if we are starting with a new text or one we have created
             completeText = getIntent().getExtras().getString("text");
             editText.setText(completeText, TextView.BufferType.EDITABLE);
-            overwrite = true;
+            overwrite = true;//If we are going to edit previous text, then overwrite it
         }
         showToolbar(title,true, View.VISIBLE,editText);
     }
@@ -63,14 +64,17 @@ public class NewTextActivity extends AppCompatActivity {
     public void showToolbar(String title, boolean upButton, int showButton, final EditText editText){
         button = findViewById(R.id.button_toolbar);
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(upButton);
         button.setVisibility(showButton);
         button.setText(R.string.save);
+
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if(isExternalStorageWritable()){
                     if(!overwrite){
                         file = new File(myDir,filename + ".txt");
@@ -80,7 +84,10 @@ public class NewTextActivity extends AppCompatActivity {
                     }
                     try {
                         Writer output = new BufferedWriter(new FileWriter(file));
-                        text = editText.getText().toString();
+                        text = editText.getText().toString();//getting the text
+                        if(text.isEmpty()){
+                            text = " ";
+                        }
                         output.write(text);
                         output.close();
                     } catch (IOException e) {
@@ -91,21 +98,22 @@ public class NewTextActivity extends AppCompatActivity {
                 else{
                     Toast.makeText(view.getContext(),R.string.externalavailable,Toast.LENGTH_LONG).show();
                 }
+
                 Intent intent = new Intent(NewTextActivity.this,MainActivity.class);
-                setResult(RESULT_OK, null);
                 startActivity(intent);
-                finish();
             }
         });
     }
 
 
-    /* Checks if external storage is available for read and write */
+    /* Checks if external storage is available for read and write
+    * copied this method from Android Documentation
+    * */
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
-            String root = Environment.getExternalStorageDirectory().toString();
-            myDir = new File(root +"/Texts");
+            String root = Environment.getExternalStorageDirectory().toString();//Getting the main directory of the internal storage
+            myDir = new File(root +"/Texts");//setting myDir to point to Texts folder
             return true;
         }
         else{

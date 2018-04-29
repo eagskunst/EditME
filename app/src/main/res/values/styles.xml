@@ -28,4 +28,9 @@
         <item name="android:scrollbars">vertical</item>
     </style>
 
+    <style name="Progressbar.White" parent="AppTheme">
+        <item name="colorControlActivated">@color/colorPrimaryDark</item>
+    </style>
+
+
 </resources>

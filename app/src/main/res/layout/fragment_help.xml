@@ -1,0 +1,49 @@
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="@color/colorBackgroundMain"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include layout="@layout/actionbar_toolbar"/>
+
+        <ScrollView
+            android:id="@+id/scrollv_help"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
+
+           <LinearLayout
+               android:orientation="vertical"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
+
+               <include layout="@layout/expandabletext_layout"
+                   android:id="@+id/expandabletext1"
+                   />
+               <include layout="@layout/expandabletext_layout"
+                   android:id="@+id/expandabletext2"
+                   />
+               <include layout="@layout/expandabletext_layout"
+                   android:id="@+id/expandabletext3"
+                   />
+
+           </LinearLayout>
+
+        </ScrollView>
+
+
+    </LinearLayout>
+
+
+
+</android.support.design.widget.CoordinatorLayout>

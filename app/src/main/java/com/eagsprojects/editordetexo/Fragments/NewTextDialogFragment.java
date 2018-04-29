@@ -41,7 +41,7 @@ public class NewTextDialogFragment extends DialogFragment {
                 Intent intent = new Intent(getActivity(),NewTextActivity.class);
                 intent.putExtra("title",title_new);
                 dialogInterface.dismiss();
-                startActivityForResult(intent,1);
+                startActivity(intent);
             }
         })
         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
