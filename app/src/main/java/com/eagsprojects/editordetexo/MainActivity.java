@@ -1,8 +1,13 @@
 package com.eagsprojects.editordetexo;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -36,6 +41,11 @@ import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveClient;
 import com.google.android.gms.drive.DriveResourceClient;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.concurrent.ThreadFactory;
+
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -56,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private Bundle bundle;
     private TextFilesHandler filesHandler;
     private ProgressBar progressBar;
+    private final boolean[] internetAccess = new boolean[1];
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,8 +158,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     case R.id.googledrivesync_item:
                         filesHandler.refreshList();
                         if(preferences.getBoolean(KEY_IS_SIGN_IN,true)){
-                            UploadHandler uploadHandler = new UploadHandler(driveClient,driveResourceClient,filesHandler,MainActivity.this,progressBar);
+                            Thread thread = threadInternetAccess();
+                            thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+                            thread.start();
+                            try {
+                                thread.join();
+                                if(internetAccess[0]){
+                                    UploadHandler uploadHandler =
+                                            new UploadHandler(driveClient, driveResourceClient, filesHandler,
+                                                    MainActivity.this, progressBar);
+
+                                }
+                                else{
+                                    Toast.makeText(MainActivity.this, R.string.connection_timed_out, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
+
                         else{
                             Toast.makeText(MainActivity.this, R.string.not_linked_to_google, Toast.LENGTH_SHORT).show();
                         }
@@ -155,7 +184,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         break;
                     case R.id.googledrivedwn_item:
                         if(preferences.getBoolean(KEY_IS_SIGN_IN,true)){
-                            DownloadHandler downloadHandler = new DownloadHandler(driveClient,driveResourceClient,filesHandler,MainActivity.this,progressBar);
+                            Thread thread = threadInternetAccess();
+                            thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+                            thread.start();
+                            try {
+                                thread.join();
+                                if(internetAccess[0]){
+                                    DownloadHandler downloadHandler =
+                                            new DownloadHandler(driveClient, driveResourceClient,
+                                                    filesHandler, MainActivity.this, progressBar);
+                                }
+                                else{
+                                    Toast.makeText(MainActivity.this, R.string.connection_timed_out, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                         else{
                             Toast.makeText(MainActivity.this, R.string.not_linked_to_google, Toast.LENGTH_SHORT).show();
@@ -241,6 +285,60 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if(drawerLayout != null){
             drawerLayout.closeDrawers();//Closing the NavigationViewMenu
         }
+    }
+
+    /*
+    if the device is in airplane mode (or presumably in other situations where there's no available network),
+    cm.getActiveNetworkInfo() will be null, so you need to add a null check.
+     */
+
+    private static boolean isConnectedToInternet(Context context){
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return networkInfo != null && networkInfo.isConnected();
+    }
+
+    private static boolean hasInternetAccess(Context context) {
+        Log.i(TAG,"Entré al internetacess");
+        if (isConnectedToInternet(context)) {
+            try {
+                HttpURLConnection urlc = (HttpURLConnection)
+                        (new URL("http://clients3.google.com/generate_204")
+                                .openConnection());
+                urlc.setRequestProperty("User-Agent", "Android");
+                urlc.setRequestProperty("Connection", "close");
+                urlc.setConnectTimeout(1500);
+                urlc.connect();
+                Log.i(TAG,"Pidiendo conexión");
+                return (urlc.getResponseCode() == 204 &&
+                        urlc.getContentLength() == 0);
+            } catch (IOException e) {
+                Log.e(TAG, "Error checking internet connection", e);
+            }
+        } else {
+            Log.d(TAG, "No network available!");
+            Toast.makeText(context,R.string.no_internet, Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+
+    private Thread threadInternetAccess(){
+        return new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    if (hasInternetAccess(getApplicationContext())) {
+                        internetAccess[0] = true;
+                        Log.i(TAG, "Entré para crear el download");
+                    } else {
+                        internetAccess[0] = false;
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 

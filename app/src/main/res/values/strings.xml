@@ -49,4 +49,7 @@
     <string name="sign_in_google">Iniciar sesión en Google</string>
     <string name="sign_out_google">Cerrar sesión de Google</string>
     <string name="not_linked_to_google">Aún no has sincronizado tu cuenta de Google con esta aplicación.</string>
+    <string name="no_internet">No hay conexión a internet</string>
+    <string name="connection_timed_out">No se pudo conectar a internet</string>
+    <string name="success">Éxito!</string>
 </resources>

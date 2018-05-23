@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.eagsprojects.editordetexo.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.DriveClient;
@@ -63,6 +64,8 @@ public class UploadHandler extends TaskGenerator implements GoogleApiClient.OnCo
         final Task<DriveContents>[] createContentsTask = new Task[s.length];
 
         progressBar.setVisibility(View.VISIBLE);
+        activity.findViewById(R.id.recyclerview).setVisibility(View.INVISIBLE);
+
 
         final Task<Void> syncTask = createSyncTask();
         final Task<MetadataBuffer> queryTask = createQueryTask();
@@ -109,7 +112,8 @@ public class UploadHandler extends TaskGenerator implements GoogleApiClient.OnCo
                                             @Override
                                             public void onComplete(@NonNull Task<List<Task<?>>> task) {
                                                 progressBar.setVisibility(View.GONE);
-                                                Toast.makeText(activity, "Success!", Toast.LENGTH_SHORT).show();//Remember to use a R.string resource here!
+                                                activity.findViewById(R.id.recyclerview).setVisibility(View.VISIBLE);
+                                                Toast.makeText(activity,R.string.success, Toast.LENGTH_SHORT).show();//Remember to use a R.string resource here!
                                             }
                                         });
                                 task.getResult().release();
@@ -143,7 +147,9 @@ public class UploadHandler extends TaskGenerator implements GoogleApiClient.OnCo
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Toast.makeText(activity, R.string.connection_timed_out+". Error: "+connectionResult.getErrorCode(), Toast.LENGTH_SHORT).show();
+        progressBar.setVisibility(View.GONE);
+        activity.findViewById(R.id.recyclerview).setVisibility(View.VISIBLE);
     }
 
 

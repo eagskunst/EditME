@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.eagsprojects.editordetexo.Fragments.ArchivesFragment;
 import com.eagsprojects.editordetexo.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.DriveClient;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
@@ -41,7 +43,7 @@ import java.util.List;
  * Created by Emmanuel on 1/4/2018.
  */
 
-public class DownloadHandler extends TaskGenerator{
+public class DownloadHandler extends TaskGenerator implements GoogleApiClient.OnConnectionFailedListener{
 
     private static final String ARCHIVES_TAG = "ArchivesFragment";
     private static final String TAG = "DownloadHandler";
@@ -72,6 +74,7 @@ public class DownloadHandler extends TaskGenerator{
         final Task<Void> syncTask = createSyncTask();
         final Task<MetadataBuffer> queryTask = createQueryTask();
         progressBar.setVisibility(View.VISIBLE);
+        activity.findViewById(R.id.recyclerview).setVisibility(View.INVISIBLE);
         progressBar.setProgress(0);
 
         /*
@@ -159,6 +162,7 @@ public class DownloadHandler extends TaskGenerator{
                                                 .addToBackStack(null)
                                                 .commit();
                                         progressBar.setVisibility(View.GONE);
+                                        activity.findViewById(R.id.recyclerview).setVisibility(View.VISIBLE);
                                         Toast.makeText(activity, "Files downloaded.", Toast.LENGTH_SHORT).show();
                                         filesDriveId.clear();
                                         filesTitles.clear();
@@ -186,5 +190,10 @@ public class DownloadHandler extends TaskGenerator{
 
     }
 
-
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(activity, R.string.connection_timed_out+". Error: "+connectionResult.getErrorCode(), Toast.LENGTH_SHORT).show();
+        progressBar.setVisibility(View.GONE);
+        activity.findViewById(R.id.recyclerview).setVisibility(View.VISIBLE);
+    }
 }

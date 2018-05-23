@@ -212,6 +212,7 @@ public class ArchivesFragment extends Fragment implements EraseDialogFragment.No
         else {
             textView.setVisibility(View.VISIBLE);
         }
+
     }
 
     /*

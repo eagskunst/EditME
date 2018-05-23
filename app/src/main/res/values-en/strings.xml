@@ -50,6 +50,9 @@
     <string name="pref_fonttype_default">Normal</string>
     <string name="pref_fontsize_default">14sp</string>
     <string name="loremipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a vestibulum quam. Fusce pharetra accumsan ipsum, non facilisis est auctor sit amet. Quisque luctus porta nisl venenatis auctor. Donec non eros vel tellus congue aliquam. Vestibulum sit amet commodo tortor, eget sodales ex. Etiam commodo aliquet efficitur. Proin laoreet laoreet.</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="connection_timed_out">Can not connect to internet</string>
+    <string name="success">Success!</string>
 
 
 </resources>
