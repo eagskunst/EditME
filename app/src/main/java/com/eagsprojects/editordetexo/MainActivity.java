@@ -1,5 +1,6 @@
 package com.eagsprojects.editordetexo;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -158,23 +159,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     case R.id.googledrivesync_item:
                         filesHandler.refreshList();
                         if(preferences.getBoolean(KEY_IS_SIGN_IN,true)){
-                            Thread thread = threadInternetAccess();
-                            thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                            thread.start();
-                            try {
-                                thread.join();
-                                if(internetAccess[0]){
-                                    UploadHandler uploadHandler =
-                                            new UploadHandler(driveClient, driveResourceClient, filesHandler,
-                                                    MainActivity.this, progressBar);
-
-                                }
-                                else{
-                                    Toast.makeText(MainActivity.this, R.string.connection_timed_out, Toast.LENGTH_SHORT).show();
-                                }
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            RequestConnection requestConnection = new RequestConnection(MainActivity.this);
+                            requestConnection.option = false;
+                            requestConnection.execute("");
                         }
 
                         else{
@@ -184,22 +171,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         break;
                     case R.id.googledrivedwn_item:
                         if(preferences.getBoolean(KEY_IS_SIGN_IN,true)){
-                            Thread thread = threadInternetAccess();
-                            thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                            thread.start();
-                            try {
-                                thread.join();
-                                if(internetAccess[0]){
-                                    DownloadHandler downloadHandler =
-                                            new DownloadHandler(driveClient, driveResourceClient,
-                                                    filesHandler, MainActivity.this, progressBar);
-                                }
-                                else{
-                                    Toast.makeText(MainActivity.this, R.string.connection_timed_out, Toast.LENGTH_SHORT).show();
-                                }
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            RequestConnection requestConnection = new RequestConnection(MainActivity.this);
+                            requestConnection.option = true;
+                            requestConnection.execute("");
                         }
                         else{
                             Toast.makeText(MainActivity.this, R.string.not_linked_to_google, Toast.LENGTH_SHORT).show();
@@ -378,6 +352,77 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             editor.commit();
         }
     }
+
+    private class RequestConnection extends AsyncTask<String,Void,String>{
+        private Activity activity;
+        private boolean option;
+        public RequestConnection(Activity activity){
+            super();
+            this.activity = activity;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            hasInternetAccess(activity.getApplicationContext());
+            return "Executed";
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+            activity.findViewById(R.id.recyclerview).setVisibility(View.INVISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if(option){
+                DownloadHandler downloadHandler =
+                        new DownloadHandler(driveClient, driveResourceClient,
+                                filesHandler, MainActivity.this, progressBar);
+            }
+            else{
+                UploadHandler uploadHandler =
+                        new UploadHandler(driveClient, driveResourceClient, filesHandler,
+                                MainActivity.this, progressBar);
+            }
+        }
+
+        private boolean isConnectedToInternet(Context context){
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+            return networkInfo != null && networkInfo.isConnected();
+        }
+
+        private boolean hasInternetAccess(Context context) {
+            Log.i(TAG,"Entré al internetacess");
+            if (isConnectedToInternet(context)) {
+                try {
+                    HttpURLConnection urlc = (HttpURLConnection)
+                            (new URL("http://clients3.google.com/generate_204")
+                                    .openConnection());
+                    urlc.setRequestProperty("User-Agent", "Android");
+                    urlc.setRequestProperty("Connection", "close");
+                    urlc.setConnectTimeout(1500);
+                    urlc.connect();
+                    Log.i(TAG,"Pidiendo conexión");
+                    return (urlc.getResponseCode() == 204 &&
+                            urlc.getContentLength() == 0);
+                } catch (IOException e) {
+                    Log.e(TAG, "Error checking internet connection", e);
+                }
+            } else {
+                Log.d(TAG, "No network available!");
+                Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                activity.findViewById(R.id.recyclerview).setVisibility(View.VISIBLE);
+            }
+            return false;
+        }
+    }
+
 }
 
 

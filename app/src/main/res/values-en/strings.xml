@@ -53,6 +53,7 @@
     <string name="no_internet">No internet connection</string>
     <string name="connection_timed_out">Can not connect to internet</string>
     <string name="success">Success!</string>
+    <string name="start_connection">Starting connection...</string>
 
 
 </resources>

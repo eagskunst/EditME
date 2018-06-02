@@ -1,7 +1,9 @@
 package com.eagsprojects.editordetexo.Handlers;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -18,6 +20,7 @@ import com.google.android.gms.drive.DriveResourceClient;
 import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -28,6 +31,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 /**
  * Created by Emmanuel on 29/3/2018.
@@ -70,11 +74,11 @@ public class UploadHandler extends TaskGenerator implements GoogleApiClient.OnCo
         final Task<Void> syncTask = createSyncTask();
         final Task<MetadataBuffer> queryTask = createQueryTask();
 
+
         final ArrayList<String> completeTexts = filesHandler.getCompleteText();
         final ArrayList<String> titles = filesHandler.getTitles();
 
-
-        Tasks.whenAllSuccess(syncTask,queryTask)
+        Tasks.whenAllSuccess(syncTask, queryTask)
                 .addOnSuccessListener(activity, new OnSuccessListener<List<Object>>() {
                     @Override
                     public void onSuccess(List<Object> objects) {
@@ -86,34 +90,33 @@ public class UploadHandler extends TaskGenerator implements GoogleApiClient.OnCo
                                 /*
                                 For each file, create a Task to upload it.
                                  */
-                                for(int i = 0;i<s.length;i++){
+                                for (int i = 0; i < s.length; i++) {
                                     createContentsTask[i] = driveResourceClient.createContents();
                                     final String text = completeTexts.get(i);
                                     final String title = titles.get(i);
-                                    if(i != (s.length - 1)){
+                                    if (i != (s.length - 1)) {
                                         createContentsTask[i].addOnCompleteListener(new OnCompleteListener<DriveContents>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DriveContents> task) {
-                                                uploadFiles(task,text,title);
+                                                uploadFiles(task, text, title);
                                             }
                                         });
-                                    }
-                                    else{
+                                    } else {
                                         createContentsTask[i].addOnCompleteListener(new OnCompleteListener<DriveContents>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DriveContents> task) {
-                                                uploadFiles(task,text,title);
+                                                uploadFiles(task, text, title);
                                             }
                                         });
                                     }
                                 }
-                                Tasks.whenAllComplete(createContentsTask[((s.length)-1)])
+                                Tasks.whenAllComplete(createContentsTask[((s.length) - 1)])
                                         .addOnCompleteListener(activity, new OnCompleteListener<List<Task<?>>>() {
                                             @Override
                                             public void onComplete(@NonNull Task<List<Task<?>>> task) {
                                                 progressBar.setVisibility(View.GONE);
                                                 activity.findViewById(R.id.recyclerview).setVisibility(View.VISIBLE);
-                                                Toast.makeText(activity,R.string.success, Toast.LENGTH_SHORT).show();//Remember to use a R.string resource here!
+                                                Toast.makeText(activity, R.string.success, Toast.LENGTH_SHORT).show();//Remember to use a R.string resource here!
                                             }
                                         });
                                 task.getResult().release();

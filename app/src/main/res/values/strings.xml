@@ -52,4 +52,5 @@
     <string name="no_internet">No hay conexión a internet</string>
     <string name="connection_timed_out">No se pudo conectar a internet</string>
     <string name="success">Éxito!</string>
+    <string name="start_connection">Empezando conexión...</string>
 </resources>
