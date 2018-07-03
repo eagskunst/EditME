@@ -68,12 +68,24 @@ public class UploadHandler extends TaskGenerator implements GoogleApiClient.OnCo
         final Task<DriveContents>[] createContentsTask = new Task[s.length];
 
         progressBar.setVisibility(View.VISIBLE);
-        activity.findViewById(R.id.recyclerview).setVisibility(View.INVISIBLE);
 
 
         final Task<Void> syncTask = createSyncTask();
         final Task<MetadataBuffer> queryTask = createQueryTask();
 
+
+        syncTask.addOnFailureListener(activity, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+        queryTask.addOnFailureListener(activity, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
 
         final ArrayList<String> completeTexts = filesHandler.getCompleteText();
         final ArrayList<String> titles = filesHandler.getTitles();
@@ -115,7 +127,6 @@ public class UploadHandler extends TaskGenerator implements GoogleApiClient.OnCo
                                             @Override
                                             public void onComplete(@NonNull Task<List<Task<?>>> task) {
                                                 progressBar.setVisibility(View.GONE);
-                                                activity.findViewById(R.id.recyclerview).setVisibility(View.VISIBLE);
                                                 Toast.makeText(activity, R.string.success, Toast.LENGTH_SHORT).show();//Remember to use a R.string resource here!
                                             }
                                         });
@@ -152,7 +163,6 @@ public class UploadHandler extends TaskGenerator implements GoogleApiClient.OnCo
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(activity, R.string.connection_timed_out+". Error: "+connectionResult.getErrorCode(), Toast.LENGTH_SHORT).show();
         progressBar.setVisibility(View.GONE);
-        activity.findViewById(R.id.recyclerview).setVisibility(View.VISIBLE);
     }
 
 

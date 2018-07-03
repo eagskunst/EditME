@@ -1,6 +1,8 @@
 package com.eagsprojects.editordetexo.Fragments;
 
+import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -17,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +46,7 @@ public class ArchivesFragment extends Fragment implements EraseDialogFragment.No
     private static int cvColor;
     private RecyclerView rv;
     private TextView textView;
+    //private ProgressBar progressBar;
     private TextsAdapter textsAdapter;
     private List<TextModel> textList = new ArrayList<>();
     private ArrayList<String> titles = new ArrayList<>(),subtexts = new ArrayList<>(),completeText = new ArrayList<>();
@@ -78,6 +82,7 @@ public class ArchivesFragment extends Fragment implements EraseDialogFragment.No
         textView = view.findViewById(R.id.textview_main);
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         rv = view.findViewById(R.id.recyclerview);
+        //progressBar = view.findViewById(R.id.progressBar);
         textView.setVisibility(View.GONE);
         rv.setVisibility(View.INVISIBLE);
 
@@ -130,17 +135,23 @@ public class ArchivesFragment extends Fragment implements EraseDialogFragment.No
                 new TextsAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(TextModel item) {
-                        Intent intent = new Intent(getActivity(), NewTextActivity.class);
-                        intent.putExtra("title", item.getTitle());
-                        intent.putExtra("text", item.getText());
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    /*Explode explode = new Explode();
-                    explode.setDuration(1000);
-                    getWindow().setExitTransition(explode);*/
+                        if(getActivity().findViewById(R.id.progressbar).getVisibility() == View.GONE){
+                            Intent intent = new Intent(getActivity(), NewTextActivity.class);
+                            intent.putExtra("title", item.getTitle());
+                            intent.putExtra("text", item.getText());
                             startActivity(intent);
-                        } else {
-                            startActivity(intent);
+                        }
+                        else{
+                            AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                                    .setMessage(R.string.taskrunning)
+                                    .setNeutralButton(R.string.OK, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.dismiss();
+                                        }
+                                    })
+                                    .create();
+                            alertDialog.show();
                         }
                     }
                 },
@@ -149,17 +160,32 @@ public class ArchivesFragment extends Fragment implements EraseDialogFragment.No
                     public void onItemLongClick(TextModel item,int position) {
 
                         /*
-                        *This how you pass arguments from a Fragment to another Fragment.
-                        *
+                         *This how you pass arguments from a Fragment to another Fragment.
+                         *
                          */
-                        Bundle bundle = new Bundle();
-                        EraseDialogFragment eraseFragment = new EraseDialogFragment();
-                        bundle.putString("title",item.getTitle());
-                        bundle.putInt("position",position);
-                        eraseFragment.setArguments(bundle);
-                        eraseFragment.show(getFragmentManager(),DIALOG_TAG);
-                        Toast.makeText(getActivity(),"You're gonna carry that weight", Toast.LENGTH_SHORT).show();
-
+                        Log.d(TAG,"Progress bar: "+getActivity().findViewById(R.id.progressbar).getVisibility());
+                        if(getActivity().findViewById(R.id.progressbar).getVisibility() == View.GONE){
+                            Bundle bundle = new Bundle();
+                            EraseDialogFragment eraseFragment = new EraseDialogFragment();
+                            bundle.putString("title", item.getTitle());
+                            bundle.putInt("position", position);
+                            eraseFragment.setArguments(bundle);
+                            eraseFragment.show(getFragmentManager(), DIALOG_TAG);
+                            Toast.makeText(getActivity(), "You're gonna carry that weight", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Log.d(TAG,"ENTRÉ AL ELSE");
+                            AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                                    .setMessage(R.string.taskrunning)
+                                    .setNeutralButton(R.string.OK, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.dismiss();
+                                        }
+                                    })
+                                    .create();
+                            alertDialog.show();
+                        }
                     }
                 });
 

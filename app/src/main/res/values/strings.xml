@@ -53,4 +53,5 @@
     <string name="connection_timed_out">No se pudo conectar a internet</string>
     <string name="success">Éxito!</string>
     <string name="start_connection">Empezando conexión...</string>
+    <string name="taskrunning">Espera a que terminen la sincronización</string>
 </resources>

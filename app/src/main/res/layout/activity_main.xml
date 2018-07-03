@@ -9,27 +9,12 @@
     tools:context=".MainActivity"
     tools:openDrawer="start"
     >
-
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <include layout="@layout/actionbar_toolbar"/>
     </FrameLayout>
-
-    <ProgressBar
-        android:id="@+id/progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:contentDescription="Recuperando textos..."
-        android:visibility="gone"
-        android:indeterminate="true"
-        android:theme="@style/Progressbar.White"
-        android:background="@android:color/white"
-        />
-        <!--android:background="@color/colorPrimaryDark" -->
-
 
     <android.support.design.widget.NavigationView
         android:id="@+id/navigationview_1"

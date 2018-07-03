@@ -25,6 +25,7 @@ import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -74,7 +75,6 @@ public class DownloadHandler extends TaskGenerator implements GoogleApiClient.On
         final Task<Void> syncTask = createSyncTask();
         final Task<MetadataBuffer> queryTask = createQueryTask();
         progressBar.setVisibility(View.VISIBLE);
-        activity.findViewById(R.id.recyclerview).setVisibility(View.INVISIBLE);
         progressBar.setProgress(0);
 
         /*
@@ -82,11 +82,24 @@ public class DownloadHandler extends TaskGenerator implements GoogleApiClient.On
         start looking for text files
          */
 
+
+        syncTask.addOnFailureListener(activity, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+        queryTask.addOnFailureListener(activity, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
         Tasks.whenAllSuccess(syncTask,queryTask)
                 .continueWithTask(new Continuation<List<Object>, Task<MetadataBuffer>>() {
                     @Override
                     public Task<MetadataBuffer> then(@NonNull Task<List<Object>> task) throws Exception {
-                        progressBar.setProgress(25);
                         folderId = getFolderId();
                         Query query = new Query.Builder()
                                 .addFilter(Filters.eq(SearchableField.MIME_TYPE,"text/plain"))
@@ -162,7 +175,6 @@ public class DownloadHandler extends TaskGenerator implements GoogleApiClient.On
                                                 .addToBackStack(null)
                                                 .commit();
                                         progressBar.setVisibility(View.GONE);
-                                        activity.findViewById(R.id.recyclerview).setVisibility(View.VISIBLE);
                                         Toast.makeText(activity, "Files downloaded.", Toast.LENGTH_SHORT).show();
                                         filesDriveId.clear();
                                         filesTitles.clear();

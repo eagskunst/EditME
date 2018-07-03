@@ -29,15 +29,15 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile 'com.android.support:design:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
     implementation "com.android.support:support-compat:26.1.0"
-    compile 'com.android.support:cardview-v7:26.1.0'
-    compile 'com.android.support:recyclerview-v7:26.1.0'
-    compile 'com.ms-square:expandableTextView:0.1.4'
-    compile('com.google.api-client:google-api-client-android:1.23.0') {
+    implementation 'com.android.support:cardview-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.ms-square:expandableTextView:0.1.4'
+    implementation('com.google.api-client:google-api-client-android:1.23.0') {
         exclude group: 'org.apache.httpcomponents'
     }
-    compile('com.google.apis:google-api-services-drive:v3-rev108-1.23.0') {
+    implementation('com.google.apis:google-api-services-drive:v3-rev108-1.23.0') {
         exclude group: 'org.apache.httpcomponents'
     }
     implementation 'com.google.android.gms:play-services-drive:12.0.1'

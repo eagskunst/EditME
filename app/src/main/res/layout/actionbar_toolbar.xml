@@ -9,8 +9,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:layout_height="wrap_content"
         app:popupTheme="@style/AppTheme.PopupOverlay">
         <Button
             android:id="@+id/button_toolbar"
@@ -20,6 +19,14 @@
             android:background="@color/colorPrimaryDark"
             />
     </android.support.v7.widget.Toolbar>
-
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminate="true"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        />
 
 </android.support.design.widget.AppBarLayout>

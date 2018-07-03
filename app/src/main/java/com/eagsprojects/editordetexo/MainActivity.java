@@ -129,9 +129,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         getFragmentManager().executePendingTransactions();
     }
 
-
-
-
     private void startNavigationView() {
         /*
         Handling container changes
@@ -297,24 +294,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         return false;
     }
 
-    private Thread threadInternetAccess(){
-        return new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    if (hasInternetAccess(getApplicationContext())) {
-                        internetAccess[0] = true;
-                        Log.i(TAG, "Entré para crear el download");
-                    } else {
-                        internetAccess[0] = false;
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
 
     private GoogleSignInClient buildGoogleSignIn() {
         GoogleSignInOptions signInOptions =
@@ -355,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private class RequestConnection extends AsyncTask<String,Void,String>{
         private Activity activity;
-        private boolean option;
+        private boolean option,result;
         public RequestConnection(Activity activity){
             super();
             this.activity = activity;
@@ -363,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         @Override
         protected String doInBackground(String... strings) {
-            hasInternetAccess(activity.getApplicationContext());
+            result = hasInternetAccess(activity.getApplicationContext());
             return "Executed";
         }
 
@@ -371,21 +350,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         protected void onPreExecute() {
             super.onPreExecute();
             progressBar.setVisibility(View.VISIBLE);
-            activity.findViewById(R.id.recyclerview).setVisibility(View.INVISIBLE);
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            if(option){
-                DownloadHandler downloadHandler =
-                        new DownloadHandler(driveClient, driveResourceClient,
-                                filesHandler, MainActivity.this, progressBar);
+            if(result){
+                if(option){
+                    DownloadHandler downloadHandler =
+                            new DownloadHandler(driveClient, driveResourceClient,
+                                    filesHandler, MainActivity.this, progressBar);
+                }
+                else{
+                    UploadHandler uploadHandler =
+                            new UploadHandler(driveClient, driveResourceClient, filesHandler,
+                                    MainActivity.this, progressBar);
+                }
             }
             else{
-                UploadHandler uploadHandler =
-                        new UploadHandler(driveClient, driveResourceClient, filesHandler,
-                                MainActivity.this, progressBar);
+                Toast.makeText(MainActivity.this, R.string.no_internet, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -415,9 +398,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
             } else {
                 Log.d(TAG, "No network available!");
-                Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.GONE);
-                activity.findViewById(R.id.recyclerview).setVisibility(View.VISIBLE);
             }
             return false;
         }
