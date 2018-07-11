@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -45,8 +44,10 @@ import com.google.android.gms.drive.DriveResourceClient;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.ThreadFactory;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -67,8 +68,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private Bundle bundle;
     private TextFilesHandler filesHandler;
     private ProgressBar progressBar;
-    private final boolean[] internetAccess = new boolean[1];
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -258,42 +257,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    /*
-    if the device is in airplane mode (or presumably in other situations where there's no available network),
-    cm.getActiveNetworkInfo() will be null, so you need to add a null check.
-     */
-
-    private static boolean isConnectedToInternet(Context context){
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-        return networkInfo != null && networkInfo.isConnected();
-    }
-
-    private static boolean hasInternetAccess(Context context) {
-        Log.i(TAG,"Entré al internetacess");
-        if (isConnectedToInternet(context)) {
-            try {
-                HttpURLConnection urlc = (HttpURLConnection)
-                        (new URL("http://clients3.google.com/generate_204")
-                                .openConnection());
-                urlc.setRequestProperty("User-Agent", "Android");
-                urlc.setRequestProperty("Connection", "close");
-                urlc.setConnectTimeout(1500);
-                urlc.connect();
-                Log.i(TAG,"Pidiendo conexión");
-                return (urlc.getResponseCode() == 204 &&
-                        urlc.getContentLength() == 0);
-            } catch (IOException e) {
-                Log.e(TAG, "Error checking internet connection", e);
-            }
-        } else {
-            Log.d(TAG, "No network available!");
-            Toast.makeText(context,R.string.no_internet, Toast.LENGTH_SHORT).show();
-        }
-        return false;
-    }
-
 
     private GoogleSignInClient buildGoogleSignIn() {
         GoogleSignInOptions signInOptions =
@@ -324,26 +287,50 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         if(account != null){
             editor.putBoolean(KEY_IS_SIGN_IN,true);
-           editor.commit();
+            editor.commit();
         }
         else{
             editor.putBoolean(KEY_IS_SIGN_IN,false);
             editor.commit();
         }
     }
-
+    /*
+     if the device is in airplane mode (or presumably in other situations where there's no available network),
+     cm.getActiveNetworkInfo() will be null, so you need to add a null check.
+      */
     private class RequestConnection extends AsyncTask<String,Void,String>{
         private Activity activity;
-        private boolean option,result;
-        public RequestConnection(Activity activity){
+        private boolean option;
+
+        private RequestConnection(Activity activity){
             super();
             this.activity = activity;
         }
 
         @Override
         protected String doInBackground(String... strings) {
-            result = hasInternetAccess(activity.getApplicationContext());
-            return "Executed";
+            if (isConnectedToInternet(activity.getApplicationContext())) {
+                Response response = null;
+                OkHttpClient httpClient = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("http://clients3.google.com/generate_204")
+                        .build();
+                try{
+                    response = httpClient.newCall(request).execute();
+                    if(response.isSuccessful()){
+                        return "Success";
+                    }
+                    else{
+                        return null;
+                    }
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            } else {
+                Log.d(TAG, "No network available!");
+                progressBar.setVisibility(View.GONE);
+            }
+            return null;
         }
 
         @Override
@@ -355,21 +342,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            if(result){
+            if(s != null){
                 if(option){
                     DownloadHandler downloadHandler =
                             new DownloadHandler(driveClient, driveResourceClient,
                                     filesHandler, MainActivity.this, progressBar);
+                    downloadHandler.startDownload();
                 }
                 else{
                     UploadHandler uploadHandler =
                             new UploadHandler(driveClient, driveResourceClient, filesHandler,
                                     MainActivity.this, progressBar);
+                    uploadHandler.startSync();
                 }
             }
             else{
                 Toast.makeText(MainActivity.this, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
             }
+            activity = null;
         }
 
         private boolean isConnectedToInternet(Context context){
@@ -379,29 +370,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             return networkInfo != null && networkInfo.isConnected();
         }
 
-        private boolean hasInternetAccess(Context context) {
-            Log.i(TAG,"Entré al internetacess");
-            if (isConnectedToInternet(context)) {
-                try {
-                    HttpURLConnection urlc = (HttpURLConnection)
-                            (new URL("http://clients3.google.com/generate_204")
-                                    .openConnection());
-                    urlc.setRequestProperty("User-Agent", "Android");
-                    urlc.setRequestProperty("Connection", "close");
-                    urlc.setConnectTimeout(1500);
-                    urlc.connect();
-                    Log.i(TAG,"Pidiendo conexión");
-                    return (urlc.getResponseCode() == 204 &&
-                            urlc.getContentLength() == 0);
-                } catch (IOException e) {
-                    Log.e(TAG, "Error checking internet connection", e);
-                }
-            } else {
-                Log.d(TAG, "No network available!");
-                progressBar.setVisibility(View.GONE);
-            }
-            return false;
-        }
     }
 
 }

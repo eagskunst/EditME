@@ -58,11 +58,10 @@ public class UploadHandler extends TaskGenerator implements GoogleApiClient.OnCo
         this.filesHandler = filesHandler;
         this.activity = activity;
         this.progressBar = progressBar;
-        startSync();
     }
 
 
-    private void startSync() {
+    public void startSync() {
         Toast.makeText(activity, "Starting sync...", Toast.LENGTH_SHORT).show();//Remember to use a R.string resource here!
         s = filesHandler.getS();
         final Task<DriveContents>[] createContentsTask = new Task[s.length];
@@ -70,27 +69,21 @@ public class UploadHandler extends TaskGenerator implements GoogleApiClient.OnCo
         progressBar.setVisibility(View.VISIBLE);
 
 
-        final Task<Void> syncTask = createSyncTask();
         final Task<MetadataBuffer> queryTask = createQueryTask();
 
 
-        syncTask.addOnFailureListener(activity, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressBar.setVisibility(View.GONE);
-            }
-        });
         queryTask.addOnFailureListener(activity, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 progressBar.setVisibility(View.GONE);
+                Toast.makeText(activity, R.string.connection_timed_out, Toast.LENGTH_SHORT).show();
             }
         });
 
         final ArrayList<String> completeTexts = filesHandler.getCompleteText();
         final ArrayList<String> titles = filesHandler.getTitles();
 
-        Tasks.whenAllSuccess(syncTask, queryTask)
+        Tasks.whenAllSuccess(queryTask)
                 .addOnSuccessListener(activity, new OnSuccessListener<List<Object>>() {
                     @Override
                     public void onSuccess(List<Object> objects) {
@@ -128,6 +121,7 @@ public class UploadHandler extends TaskGenerator implements GoogleApiClient.OnCo
                                             public void onComplete(@NonNull Task<List<Task<?>>> task) {
                                                 progressBar.setVisibility(View.GONE);
                                                 Toast.makeText(activity, R.string.success, Toast.LENGTH_SHORT).show();//Remember to use a R.string resource here!
+                                                activity = null;
                                             }
                                         });
                                 task.getResult().release();

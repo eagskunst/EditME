@@ -68,11 +68,9 @@ public class DownloadHandler extends TaskGenerator implements GoogleApiClient.On
         this.progressBar = progressBar;
         filesDriveId = new ArrayList<>();
         filesTitles = new ArrayList<>();
-        startDownload();
     }
 
-    private void startDownload(){
-        final Task<Void> syncTask = createSyncTask();
+    public void startDownload(){
         final Task<MetadataBuffer> queryTask = createQueryTask();
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setProgress(0);
@@ -83,12 +81,7 @@ public class DownloadHandler extends TaskGenerator implements GoogleApiClient.On
          */
 
 
-        syncTask.addOnFailureListener(activity, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressBar.setVisibility(View.GONE);
-            }
-        });
+
         queryTask.addOnFailureListener(activity, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -96,7 +89,7 @@ public class DownloadHandler extends TaskGenerator implements GoogleApiClient.On
             }
         });
 
-        Tasks.whenAllSuccess(syncTask,queryTask)
+        Tasks.whenAllSuccess(queryTask)
                 .continueWithTask(new Continuation<List<Object>, Task<MetadataBuffer>>() {
                     @Override
                     public Task<MetadataBuffer> then(@NonNull Task<List<Object>> task) throws Exception {
@@ -178,6 +171,7 @@ public class DownloadHandler extends TaskGenerator implements GoogleApiClient.On
                                         Toast.makeText(activity, "Files downloaded.", Toast.LENGTH_SHORT).show();
                                         filesDriveId.clear();
                                         filesTitles.clear();
+                                        activity = null;
                                     }
                                 }
                             });
@@ -196,6 +190,7 @@ public class DownloadHandler extends TaskGenerator implements GoogleApiClient.On
                             .commit();
                     progressBar.setVisibility(View.GONE);
                     queryTask.getResult().release();
+                    activity = null;
                 }
             }
         });

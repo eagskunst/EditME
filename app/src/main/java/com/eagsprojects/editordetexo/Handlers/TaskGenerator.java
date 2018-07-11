@@ -58,33 +58,6 @@ public class TaskGenerator{
         this.activity = activity;
     }
 
-    public Task<Void> createSyncTask() {
-        /*
-        Start sync task
-         */
-        final Task<Void> syncTask = driveClient.requestSync();
-        syncTask.addOnFailureListener(activity, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.i(TAG,"Sync fail. "+e);
-            }
-        });
-        syncTask.addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Log.i(TAG,"ENTRÉ");
-                if(task.isSuccessful()){
-                    Log.i(TAG,"SYNC SUCCESS");
-                }
-                else {
-                    Toast.makeText(activity, "Couldn't sync with Google Drive.", Toast.LENGTH_SHORT).show();//Remember to use a R.string resource here!
-                    Log.i(TAG, "FAIL SYNC");
-                }
-            }
-        });
-        return syncTask;
-    }
-
     public Task<MetadataBuffer> createQueryTask() {
         /*
         Start querytask to look for folder
